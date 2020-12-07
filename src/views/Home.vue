@@ -1,18 +1,50 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div class="content">
+    <div v-if="books">
+      <CardElem v-for="book in books" :key="book.isbn" :book="book" />
+    </div>
+    <div v-else>
+      <div class="not-books">
+        {{ emptyBooks }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import CardElem from "@/components/CardElem.vue";
+import { mapState } from "vuex";
 
 export default {
-  name: "Home",
+  data() {
+    return {
+      emptyBooks: "Oops il n'y a pas de livre en ce moment"
+    };
+  },
   components: {
-    HelloWorld
+    CardElem
+  },
+  created() {
+    this.$store.dispatch("home/fetchData");
+  },
+  computed: {
+    cartList() {
+      return this.cart.length;
+    },
+    ...mapState("home", ["books"])
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.not-books {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+</style>
